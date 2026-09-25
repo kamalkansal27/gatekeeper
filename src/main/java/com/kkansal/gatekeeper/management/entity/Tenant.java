@@ -1,17 +1,15 @@
 package com.kkansal.gatekeeper.management.entity;
 
-import com.kkansal.gatekeeper.management.enums.TenantStatus;
+import com.kkansal.gatekeeper.management.entity.enums.Status;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 
@@ -26,6 +24,6 @@ public class Tenant extends Auditable {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private TenantStatus tenantStatus;
+    private Status tenantStatus;
 
 }
