@@ -25,7 +25,7 @@ public class Route extends Auditable {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "upstream_service_id", nullable = false)
-    private UpstreamService upstreamService;
+    private Upstream upstream;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(

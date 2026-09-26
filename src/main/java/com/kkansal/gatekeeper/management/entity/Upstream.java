@@ -2,23 +2,21 @@ package com.kkansal.gatekeeper.management.entity;
 
 import com.kkansal.gatekeeper.management.entity.enums.Status;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 
 @Entity
-public class UpstreamService extends Auditable {
+public class Upstream extends Auditable {
 
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String slug;
 
     @Column(nullable = false)

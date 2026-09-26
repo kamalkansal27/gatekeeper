@@ -20,11 +20,6 @@ public class TenantController {
         this.tenantService = tenantService;
     }
 
-    @PostMapping
-    public TenantResponse create(@RequestBody @Valid CreateTenantRequest tenantRequest) {
-        return tenantService.create(tenantRequest);
-    }
-
     @GetMapping
     public List<TenantResponse> getAll() {
         return tenantService.getAll();
@@ -33,6 +28,11 @@ public class TenantController {
     @GetMapping("/{id}")
     public TenantResponse get(@PathVariable UUID id) {
         return tenantService.get(id);
+    }
+
+    @PostMapping
+    public TenantResponse create(@RequestBody @Valid CreateTenantRequest tenantRequest) {
+        return tenantService.create(tenantRequest);
     }
 
     @DeleteMapping("/{id}")
