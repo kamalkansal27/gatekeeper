@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/tenants")
+@RequestMapping("/api")
 public class TenantController {
 
     private TenantService tenantService;
@@ -20,7 +20,7 @@ public class TenantController {
         this.tenantService = tenantService;
     }
 
-    @GetMapping
+    @GetMapping("/admin/tenants")
     public List<TenantResponse> getAll() {
         return tenantService.getAll();
     }
@@ -30,12 +30,12 @@ public class TenantController {
         return tenantService.get(id);
     }
 
-    @PostMapping
+    @PostMapping("/admin/tenants")
     public TenantResponse create(@RequestBody @Valid CreateTenantRequest tenantRequest) {
         return tenantService.create(tenantRequest);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/admin/tenants/{id}")
     public void delete(@PathVariable UUID id) {
         tenantService.delete(id);
     }

@@ -1,10 +1,13 @@
 package com.kkansal.gatekeeper.management.dto.response;
 
+import com.kkansal.gatekeeper.management.entity.Role;
 import com.kkansal.gatekeeper.management.entity.User;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter

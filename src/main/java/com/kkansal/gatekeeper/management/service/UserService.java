@@ -5,15 +5,18 @@ import com.kkansal.gatekeeper.management.dto.response.UserResponse;
 import com.kkansal.gatekeeper.management.entity.Role;
 import com.kkansal.gatekeeper.management.entity.User;
 import com.kkansal.gatekeeper.management.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 @AllArgsConstructor
-public class UserAuthService {
+public class UserService {
 
     private UserRepository userRepository;
     private RoleService roleService;
@@ -24,6 +27,18 @@ public class UserAuthService {
                 .orElseThrow(() -> new UsernameNotFoundException(username + " does not exists"));
     }
 
+    public List<UserResponse> getAll() {
+        return userRepository.findAll().stream()
+                .map(UserResponse::from)
+                .toList();
+    }
+
+    public UserResponse get(String username) {
+        User user = findByUsername(username);
+        return UserResponse.from(user);
+    }
+
+    @Transactional
     public UserResponse create(CreateUserRequest userRequest) {
 
         User user = new User();
@@ -37,5 +52,11 @@ public class UserAuthService {
 
         userRepository.save(user);
         return UserResponse.from(user);
+    }
+
+    @Transactional
+    public void delete(String username) {
+        User user = findByUsername(username);
+        userRepository.delete(user);
     }
 }

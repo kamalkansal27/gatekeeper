@@ -1,7 +1,8 @@
-package com.kkansal.gatekeeper.management.service;
+package com.kkansal.gatekeeper.management.service.auth;
 
 import com.kkansal.gatekeeper.management.entity.CustomUserDetails;
 import com.kkansal.gatekeeper.management.entity.User;
+import com.kkansal.gatekeeper.management.service.UserService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,12 +13,12 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private UserAuthService userAuthService;
+    private UserService userService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        User user = userAuthService.findByUsername(username);
+        User user = userService.findByUsername(username);
 
         return new CustomUserDetails(user);
     }

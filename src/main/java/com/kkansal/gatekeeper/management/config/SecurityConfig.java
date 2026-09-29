@@ -1,8 +1,6 @@
 package com.kkansal.gatekeeper.management.config;
 
-import com.kkansal.gatekeeper.management.entity.CustomUserDetails;
-import com.kkansal.gatekeeper.management.service.CustomUserDetailsService;
-import com.mysql.cj.protocol.AuthenticationProvider;
+import com.kkansal.gatekeeper.management.service.auth.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -35,6 +33,7 @@ public class SecurityConfig {
                 .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/api/users/register").permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
 
                 );
