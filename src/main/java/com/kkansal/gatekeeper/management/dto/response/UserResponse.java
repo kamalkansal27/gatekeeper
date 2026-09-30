@@ -20,6 +20,8 @@ public class UserResponse {
 
     private String username;
 
+    private UUID tenantId;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
@@ -28,6 +30,7 @@ public class UserResponse {
         return UserResponse.builder()
                 .id(user.getId())
                 .username(user.getUsername())
+                .tenantId(user.getTenantId())
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())
                 .build();

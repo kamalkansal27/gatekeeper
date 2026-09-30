@@ -26,13 +26,13 @@ public class UpstreamService {
         this.tenantService = tenantService;
     }
 
-    public Upstream findById(UUID upstreamId) {
-        return upstreamRepository.findById(upstreamId)
+    private Upstream findByIdAndTenant(UUID tenantId, UUID upstreamId) {
+        return upstreamRepository.findByIdAndTenantId(upstreamId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Upstream not found with ID: " + upstreamId));
     }
 
-    public UpstreamResponse get(UUID upstreamId) {
-        return UpstreamResponse.from(findById(upstreamId));
+    public UpstreamResponse get(UUID tenantId, UUID upstreamId) {
+        return UpstreamResponse.from(findByIdAndTenant(tenantId, upstreamId));
     }
 
     public List<UpstreamResponse> getAll() {
@@ -75,15 +75,18 @@ public class UpstreamService {
     @Transactional
     public UpstreamResponse update(UUID tenantId, UUID upstreamId, UpdateUpstreamRequest upstreamRequest) {
 
-        Tenant tenant = tenantService.findById(tenantId);
+        Upstream upstream = findByIdAndTenant(tenantId, upstreamId);
+        Tenant tenant = upstream.getTenant();
 
-        if(upstreamRequest.getSlug() != null && upstreamRepository.findBySlugAndTenant(upstreamRequest.getSlug(), tenant) != null) {
-            throw new DuplicateResourceException(
-                    "Upstream with slug name '" + upstreamRequest.getSlug() + "' already exists in Tenant - " + tenant.getName()
-            );
+        if(upstreamRequest.getSlug() != null) {
+            Upstream existing = upstreamRepository.findBySlugAndTenant(upstreamRequest.getSlug(), tenant);
+            if(existing != null && !existing.getId().equals(upstreamId)) {
+                throw new DuplicateResourceException(
+                        "Upstream with slug name '" + upstreamRequest.getSlug() + "' already exists in Tenant - " + tenant.getName()
+                );
+            }
         }
 
-        Upstream upstream = findById(upstreamId);
         upstream.setName(upstreamRequest.getName() == null ? upstream.getName() : upstreamRequest.getName());
         upstream.setSlug(upstreamRequest.getSlug() == null ? upstream.getSlug() : upstreamRequest.getSlug());
         upstream.setHost(upstreamRequest.getHost() == null ? upstream.getHost() : upstreamRequest.getHost());
@@ -94,8 +97,7 @@ public class UpstreamService {
     }
 
     @Transactional
-    public void delete(UUID id) {
-        Upstream upstream = findById(id);
-        upstreamRepository.delete(upstream);
+    public void delete(UUID tenantId, UUID upstreamId) {
+        upstreamRepository.delete(findByIdAndTenant(tenantId, upstreamId));
     }
 }

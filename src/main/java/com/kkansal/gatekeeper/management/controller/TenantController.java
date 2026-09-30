@@ -25,11 +25,6 @@ public class TenantController {
         return tenantService.getAll();
     }
 
-    @GetMapping("/{id}")
-    public TenantResponse get(@PathVariable UUID id) {
-        return tenantService.get(id);
-    }
-
     @PostMapping("/admin/tenants")
     public TenantResponse create(@RequestBody @Valid CreateTenantRequest tenantRequest) {
         return tenantService.create(tenantRequest);
@@ -40,7 +35,12 @@ public class TenantController {
         tenantService.delete(id);
     }
 
-    @PatchMapping("/{id}")
+    @GetMapping("/tenants/{id}")
+    public TenantResponse get(@PathVariable UUID id) {
+        return tenantService.get(id);
+    }
+
+    @PatchMapping("/tenants/{id}")
     public TenantResponse update(@PathVariable UUID id, @RequestBody @Valid UpdateTenantRequest tenantRequest) {
         return tenantService.update(id, tenantRequest);
     }

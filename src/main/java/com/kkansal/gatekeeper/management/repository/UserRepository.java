@@ -13,4 +13,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     @EntityGraph(attributePaths = "roleSet")
     Optional<User> findByUsername(String username);
+
+    Optional<User> findByUsernameAndTenantId(String username, UUID tenantId);
 }

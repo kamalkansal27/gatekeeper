@@ -19,19 +19,19 @@ public class UpstreamController {
 
     private UpstreamService upstreamService;
 
-    @GetMapping("/upstreams")
+    @GetMapping("/admin/upstreams")
     public List<UpstreamResponse> getAll(){
         return upstreamService.getAll();
-    }
-
-    @GetMapping("/upstreams/{upstreamId}")
-    public UpstreamResponse get(@PathVariable UUID upstreamId) {
-        return upstreamService.get(upstreamId);
     }
 
     @GetMapping("/tenants/{tenantId}/upstreams")
     public List<UpstreamResponse> getAllByTenant(@PathVariable UUID tenantId) {
         return upstreamService.getAllByTenantId(tenantId);
+    }
+
+    @GetMapping("/tenants/{tenantId}/upstreams/{upstreamId}")
+    public UpstreamResponse get(@PathVariable UUID tenantId, @PathVariable UUID upstreamId) {
+        return upstreamService.get(tenantId, upstreamId);
     }
 
     @PostMapping("/tenants/{tenantId}/upstreams")
@@ -44,8 +44,8 @@ public class UpstreamController {
         return upstreamService.update(tenantId, upstreamId, upstreamRequest);
     }
 
-    @DeleteMapping("/upstreams/{upstreamId}")
-    public void delete(@PathVariable UUID upstreamId) {
-        upstreamService.delete(upstreamId);
+    @DeleteMapping("/tenants/{tenantId}/upstreams/{upstreamId}")
+    public void delete(@PathVariable UUID tenantId, @PathVariable UUID upstreamId) {
+        upstreamService.delete(tenantId, upstreamId);
     }
 }

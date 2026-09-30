@@ -28,6 +28,11 @@ public class TenantService {
                 .orElseThrow(() -> new EntityNotFoundException("Tenant not found with ID: " + id));
     }
 
+    public Tenant findBySlug(String slug) {
+        return tenantRepository.findBySlug(slug)
+                .orElseThrow(() -> new EntityNotFoundException("Tenant not found with slug: " + slug));
+    }
+
     public TenantResponse get(UUID id) {
         return TenantResponse.from(findById(id));
     }
@@ -41,7 +46,7 @@ public class TenantService {
     @Transactional
     public TenantResponse create(CreateTenantRequest tenantRequest) {
 
-        if(tenantRepository.findBySlug(tenantRequest.getSlug()) != null) {
+        if(findBySlug(tenantRequest.getSlug()) != null) {
             throw new DuplicateResourceException("Tenant with slug name '" + tenantRequest.getSlug() + "' already exists");
         }
 
@@ -58,8 +63,9 @@ public class TenantService {
     @Transactional
     public TenantResponse update(UUID id, UpdateTenantRequest tenantRequest) {
 
-        if(tenantRequest.getSlug() != null && tenantRepository.findBySlug(tenantRequest.getSlug()) != null) {
-            throw new DuplicateResourceException("Tenant with slug name '" + tenantRequest.getSlug() + "' already exists");
+        if(tenantRequest.getSlug() != null && findBySlug(tenantRequest.getSlug()) != null) {
+            throw new DuplicateResourceException("Tenant with slug name '" + tenantRequest.getSlug() + "' already exists." +
+                    " Please choose a different slug name!");
         }
 
         Tenant tenant = findById(id);

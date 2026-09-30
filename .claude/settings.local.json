@@ -9,5 +9,6 @@
     "guidewire-docs-staging",
     "jutro-developer-assistant",
     "wfscopilot"
-  ]
+  ],
+  "outputStyle": "default"
 }
