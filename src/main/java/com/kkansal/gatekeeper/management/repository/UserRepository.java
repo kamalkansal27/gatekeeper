@@ -1,5 +1,6 @@
 package com.kkansal.gatekeeper.management.repository;
 
+import com.kkansal.gatekeeper.management.entity.Tenant;
 import com.kkansal.gatekeeper.management.entity.User;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,7 +13,7 @@ import java.util.UUID;
 public interface UserRepository extends JpaRepository<User, UUID> {
 
     @EntityGraph(attributePaths = "roleSet")
-    Optional<User> findByUsername(String username);
+    Optional<User> findByUsernameAndTenant(String username, Tenant tenant);
 
-    Optional<User> findByUsernameAndTenantId(String username, UUID tenantId);
+    Optional<User> findByUsername(String username);
 }

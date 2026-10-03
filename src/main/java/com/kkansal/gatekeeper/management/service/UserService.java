@@ -25,13 +25,8 @@ public class UserService {
     private TenantService tenantService;
     private PasswordEncoder passwordEncoder;
 
-    public User findByUsernameAndTenantId(UUID tenantId, String username) {
-        return userRepository.findByUsernameAndTenantId(username, tenantId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found: " + username));
-    }
-
-    public User findByUsername(String username) {
-        return userRepository.findByUsername(username)
+    public User findByUsernameAndTenant(Tenant tenant, String username) {
+        return userRepository.findByUsernameAndTenant(username, tenant)
                 .orElseThrow(() -> new EntityNotFoundException("User not found: " + username));
     }
 
@@ -42,7 +37,10 @@ public class UserService {
     }
 
     public UserResponse get(UUID tenantId, String username) {
-        User user = findByUsernameAndTenantId(tenantId, username);
+
+        Tenant tenant = tenantService.findById(tenantId);
+
+        User user = findByUsernameAndTenant(tenant, username);
         return UserResponse.from(user);
     }
 
@@ -52,7 +50,7 @@ public class UserService {
         User user = new User();
         user.setUsername(userRequest.getUsername());
 
-        Role role = roleService.findByName("ROLE_SVC_USER");
+        Role role = roleService.findByName("ROLE_ADMIN");
         user.getRoleSet().add(role);
 
         String encodedPassword = passwordEncoder.encode(userRequest.getPassword());
@@ -69,10 +67,7 @@ public class UserService {
         user.setUsername(userRequest.getUsername());
 
         Tenant tenant = tenantService.findById(tenantId);
-        user.setTenantId(tenant.getId());
-
-        Role role = roleService.findByName("ROLE_TENANT_USER");
-        user.getRoleSet().add(role);
+        user.setTenant(tenant);
 
         String encodedPassword = passwordEncoder.encode(userRequest.getPassword());
         user.setPassword(encodedPassword);
@@ -84,7 +79,9 @@ public class UserService {
 
     @Transactional
     public void delete(UUID tenantId, String username) {
-        User user = findByUsernameAndTenantId(tenantId, username);
+
+        Tenant tenant = tenantService.findById(tenantId);
+        User user = findByUsernameAndTenant(tenant, username);
         userRepository.delete(user);
     }
 }

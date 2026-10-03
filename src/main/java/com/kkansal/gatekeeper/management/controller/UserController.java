@@ -17,11 +17,6 @@ public class UserController {
 
     private UserService userService;
 
-    @GetMapping("/admin/users")
-    public List<UserResponse> getAll() {
-        return userService.getAll();
-    }
-
     @PostMapping("/admin/users/register")
     public UserResponse create(@RequestBody @Valid CreateUserRequest userRequest) {
        return userService.create(userRequest);
@@ -30,6 +25,11 @@ public class UserController {
     @PostMapping("/tenants/{tenantId}/users/register")
     public UserResponse createWithTenantId(@PathVariable UUID tenantId, @RequestBody @Valid CreateUserRequest createUserRequest){
         return userService.createWithTenantId(tenantId, createUserRequest);
+    }
+
+    @GetMapping("/admin/users")
+    public List<UserResponse> getAll() {
+        return userService.getAll();
     }
 
     @GetMapping("/tenants/{tenantId}/users/{username}")

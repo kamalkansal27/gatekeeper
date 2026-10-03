@@ -21,8 +21,9 @@ public class User extends Auditable {
     @Column(nullable = false)
     private String password;
 
-    @Column
-    private UUID tenantId;
+    @ManyToOne
+    @JoinColumn(name = "tenant_id")
+    private Tenant tenant;
 
     @ManyToMany
     @JoinTable(

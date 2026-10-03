@@ -4,6 +4,7 @@ import com.kkansal.gatekeeper.management.service.auth.CustomUserDetailsService;
 import com.kkansal.gatekeeper.management.service.auth.TenantAuthorizationManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import static org.springframework.http.HttpMethod.*;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -31,15 +32,38 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity,
                                                    DaoAuthenticationProvider daoAuthenticationProvider,
-                                                   TenantAuthorizationManager tenantAuthorizationManager) {
+                                                   TenantAuthorizationManager tenant) {
         httpSecurity.csrf(csrf -> csrf.disable())
                 .authenticationProvider(daoAuthenticationProvider)
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(auth ->
+
                         auth.requestMatchers("/error").permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("SVC_USER")
-                        .requestMatchers("/api/tenants/{tenantId}/**").access(tenantAuthorizationManager)
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+                        // Every tenant-scoped route must be listed explicitly; unlisted routes fall through to denyAll().
+                        .requestMatchers(GET, "/api/tenants/{tenantId}").access(tenant.with("TENANT_READ", "TENANT_WRITE"))
+                        .requestMatchers(PATCH, "/api/tenants/{tenantId}").access(tenant.with("TENANT_WRITE"))
+
+                        .requestMatchers(POST, "/api/tenants/{tenantId}/roles").access(tenant.with("ROLE_WRITE"))
+                        .requestMatchers(GET, "/api/tenants/{tenantId}/roles/*").access(tenant.with("ROLE_READ", "ROLE_WRITE"))
+                        .requestMatchers(PATCH, "/api/tenants/{tenantId}/roles/*").access(tenant.with("ROLE_WRITE"))
+                        .requestMatchers(DELETE, "/api/tenants/{tenantId}/roles/*").access(tenant.with("ROLE_WRITE"))
+                        .requestMatchers(PUT, "/api/tenants/{tenantId}/roles/*/permissions/*").access(tenant.with("ROLE_WRITE"))
+                        .requestMatchers(DELETE, "/api/tenants/{tenantId}/roles/*/permissions/*").access(tenant.with("ROLE_WRITE"))
+
+                        .requestMatchers(GET, "/api/tenants/{tenantId}/upstreams", "/api/tenants/{tenantId}/upstreams/*").access(tenant.with("UPSTREAM_READ", "UPSTREAM_WRITE"))
+                        .requestMatchers(POST, "/api/tenants/{tenantId}/upstreams").access(tenant.with("UPSTREAM_WRITE"))
+                        .requestMatchers(PATCH, "/api/tenants/{tenantId}/upstreams/*").access(tenant.with("UPSTREAM_WRITE"))
+                        .requestMatchers(DELETE, "/api/tenants/{tenantId}/upstreams/*").access(tenant.with("UPSTREAM_WRITE"))
+
+                        .requestMatchers(POST, "/api/tenants/{tenantId}/users/register").access(tenant.with("USER_WRITE"))
+                        .requestMatchers(GET, "/api/tenants/{tenantId}/users/*", "/api/tenants/{tenantId}/users/*/roles").access(tenant.with("USER_READ", "USER_WRITE"))
+                        .requestMatchers(DELETE, "/api/tenants/{tenantId}/users/*").access(tenant.with("USER_WRITE"))
+                        .requestMatchers(PUT, "/api/tenants/{tenantId}/users/*/roles/*").access(tenant.with("USER_WRITE"))
+                        .requestMatchers(DELETE, "/api/tenants/{tenantId}/users/*/roles/*").access(tenant.with("USER_WRITE"))
+
                         .anyRequest().denyAll()
                 );
         return httpSecurity.build();

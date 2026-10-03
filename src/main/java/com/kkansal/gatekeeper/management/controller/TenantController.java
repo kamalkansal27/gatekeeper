@@ -20,19 +20,14 @@ public class TenantController {
         this.tenantService = tenantService;
     }
 
-    @GetMapping("/admin/tenants")
-    public List<TenantResponse> getAll() {
-        return tenantService.getAll();
-    }
-
     @PostMapping("/admin/tenants")
     public TenantResponse create(@RequestBody @Valid CreateTenantRequest tenantRequest) {
         return tenantService.create(tenantRequest);
     }
 
-    @DeleteMapping("/admin/tenants/{id}")
-    public void delete(@PathVariable UUID id) {
-        tenantService.delete(id);
+    @GetMapping("/admin/tenants")
+    public List<TenantResponse> getAll() {
+        return tenantService.getAll();
     }
 
     @GetMapping("/tenants/{id}")
@@ -43,5 +38,10 @@ public class TenantController {
     @PatchMapping("/tenants/{id}")
     public TenantResponse update(@PathVariable UUID id, @RequestBody @Valid UpdateTenantRequest tenantRequest) {
         return tenantService.update(id, tenantRequest);
+    }
+
+    @DeleteMapping("/admin/tenants/{id}")
+    public void delete(@PathVariable UUID id) {
+        tenantService.delete(id);
     }
 }

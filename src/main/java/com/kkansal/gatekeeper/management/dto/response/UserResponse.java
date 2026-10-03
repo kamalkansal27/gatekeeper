@@ -27,12 +27,18 @@ public class UserResponse {
     private LocalDateTime updatedAt;
 
     public static UserResponse from(User user) {
-        return UserResponse.builder()
+
+        UserResponse userResponse = UserResponse.builder()
                 .id(user.getId())
                 .username(user.getUsername())
-                .tenantId(user.getTenantId())
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())
                 .build();
+
+        if(user.getTenant() != null) {
+            userResponse.setTenantId(user.getTenant().getId());
+        }
+
+        return userResponse;
     }
 }

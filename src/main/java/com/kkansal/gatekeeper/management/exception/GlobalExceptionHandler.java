@@ -33,11 +33,6 @@ public class GlobalExceptionHandler {
         return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.getMessage());
     }
 
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ProblemDetail handleDataIntegrityViolationException(DataIntegrityViolationException exception) {
-        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.getMessage());
-    }
-
     @ExceptionHandler(EntityNotFoundException.class)
     public ProblemDetail handleEntityNotFoundException(EntityNotFoundException exception) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());

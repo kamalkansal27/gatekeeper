@@ -10,14 +10,11 @@ import java.util.UUID;
 @Component
 public class TenantSecurityService {
 
-    public boolean canAccessTenant(Authentication authentication, UUID tenantId) {
-
-        if (AuthHelper.isServiceUser(authentication)) {
-            return true;
-        }
-
-        return AuthHelper.isTenantUser(authentication)
+    public boolean belongsToTenant(Authentication authentication, UUID tenantId) {
+        return authentication != null
+                && authentication.isAuthenticated()
                 && authentication.getPrincipal() instanceof CustomUserDetails user
-                && Objects.equals(user.getTenantId(), tenantId);
+                && user.getTenant() != null
+                && Objects.equals(user.getTenant().getId(), tenantId);
     }
 }
