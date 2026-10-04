@@ -15,5 +15,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     @EntityGraph(attributePaths = "roleSet")
     Optional<User> findByUsernameAndTenant(String username, Tenant tenant);
 
+    @EntityGraph(attributePaths = {"roleSet", "roleSet.permissionSet"})
     Optional<User> findByUsername(String username);
 }

@@ -5,6 +5,7 @@ import com.kkansal.gatekeeper.management.dto.request.UpdateRoleRequest;
 import com.kkansal.gatekeeper.management.dto.response.RoleResponse;
 import com.kkansal.gatekeeper.management.entity.Role;
 import com.kkansal.gatekeeper.management.entity.Tenant;
+import com.kkansal.gatekeeper.management.exception.DuplicateResourceException;
 import com.kkansal.gatekeeper.management.repository.RoleRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -12,6 +13,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -63,6 +65,11 @@ public class RoleService {
     public RoleResponse createWithTenantId(UUID tenantId, CreateRoleRequest roleRequest) {
 
         Tenant tenant = tenantService.findById(tenantId);
+
+        if(!roleRepository.findByNameAndTenant(roleRequest.getName(), tenant).isEmpty()) {
+            throw new DuplicateResourceException("Role with name '" + roleRequest.getName()
+                    + "' already exists in tenant " + tenant.getName());
+        }
 
         Role role = Role.builder()
                 .name(roleRequest.getName())

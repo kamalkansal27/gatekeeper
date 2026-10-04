@@ -13,9 +13,15 @@ import java.util.UUID;
 @NoArgsConstructor
 
 @Entity
+@Table(
+        uniqueConstraints = @UniqueConstraint(
+                name = "uk_username_tenant",
+                columnNames = {"username", "tenant_id"}
+        )
+)
 public class User extends Auditable {
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String username;
 
     @Column(nullable = false)

@@ -47,6 +47,10 @@ public class UserService {
     @Transactional
     public UserResponse create(CreateUserRequest userRequest) {
 
+        if(userRequest.getTenantId() != null) {
+            return createWithTenantId(userRequest.getTenantId(), userRequest);
+        }
+
         User user = new User();
         user.setUsername(userRequest.getUsername());
 

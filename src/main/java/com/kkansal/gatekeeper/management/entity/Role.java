@@ -3,6 +3,7 @@ package com.kkansal.gatekeeper.management.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -12,9 +13,15 @@ import java.util.Set;
 @NoArgsConstructor
 
 @Entity
+@Table(
+        uniqueConstraints = @UniqueConstraint(
+                name = "uk_name_tenant",
+                columnNames = {"name", "tenant_id"}
+        )
+)
 public class Role extends Auditable {
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String name;
 
     @ManyToOne
@@ -27,5 +34,5 @@ public class Role extends Auditable {
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "permission_id")
     )
-    private Set<Permission> permissionSet;
+    private Set<Permission> permissionSet  = new HashSet<>();
 }

@@ -1,14 +1,21 @@
 package com.kkansal.gatekeeper.management.service;
 
+import com.kkansal.gatekeeper.management.dto.request.CreateRoleRequest;
 import com.kkansal.gatekeeper.management.dto.request.CreateTenantRequest;
+import com.kkansal.gatekeeper.management.dto.request.CreateUserRequest;
 import com.kkansal.gatekeeper.management.dto.request.UpdateTenantRequest;
+import com.kkansal.gatekeeper.management.dto.response.RoleResponse;
 import com.kkansal.gatekeeper.management.dto.response.TenantResponse;
+import com.kkansal.gatekeeper.management.dto.response.UserResponse;
+import com.kkansal.gatekeeper.management.entity.Role;
 import com.kkansal.gatekeeper.management.entity.Tenant;
+import com.kkansal.gatekeeper.management.entity.User;
 import com.kkansal.gatekeeper.management.entity.enums.Status;
 import com.kkansal.gatekeeper.management.exception.DuplicateResourceException;
 import com.kkansal.gatekeeper.management.repository.TenantRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
