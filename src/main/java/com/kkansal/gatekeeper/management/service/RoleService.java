@@ -71,10 +71,9 @@ public class RoleService {
                     + "' already exists in tenant " + tenant.getName());
         }
 
-        Role role = Role.builder()
-                .name(roleRequest.getName())
-                .tenant(tenant)
-                .build();
+        Role role = new Role();
+        role.setName(roleRequest.getName());
+        role.setTenant(tenant);
 
         roleRepository.save(role);
         return RoleResponse.from(role);

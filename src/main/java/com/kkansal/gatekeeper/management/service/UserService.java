@@ -25,9 +25,14 @@ public class UserService {
     private TenantService tenantService;
     private PasswordEncoder passwordEncoder;
 
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with: " + username));
+    }
+
     public User findByUsernameAndTenant(Tenant tenant, String username) {
         return userRepository.findByUsernameAndTenant(username, tenant)
-                .orElseThrow(() -> new EntityNotFoundException("User not found: " + username));
+                .orElseThrow(() -> new EntityNotFoundException("User not found with: " + username));
     }
 
     public List<UserResponse> getAll() {

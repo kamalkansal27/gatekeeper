@@ -11,24 +11,24 @@ import com.kkansal.gatekeeper.management.entity.Role;
 import com.kkansal.gatekeeper.management.entity.Tenant;
 import com.kkansal.gatekeeper.management.entity.User;
 import com.kkansal.gatekeeper.management.entity.enums.Status;
+import com.kkansal.gatekeeper.management.event.TenantCreatedEvent;
 import com.kkansal.gatekeeper.management.exception.DuplicateResourceException;
 import com.kkansal.gatekeeper.management.repository.TenantRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
+@AllArgsConstructor
 public class TenantService {
 
     private TenantRepository tenantRepository;
-
-    public TenantService(TenantRepository tenantRepository) {
-        this.tenantRepository = tenantRepository;
-    }
+    private ApplicationEventPublisher eventPublisher;
 
     public Tenant findById(UUID id) {
         return tenantRepository.findById(id)
@@ -59,6 +59,8 @@ public class TenantService {
                 .build();
 
         tenantRepository.save(tenant);
+        eventPublisher.publishEvent(new TenantCreatedEvent(tenant));
+
         return TenantResponse.from(tenant);
     }
 
