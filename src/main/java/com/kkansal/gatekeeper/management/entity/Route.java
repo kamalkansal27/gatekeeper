@@ -2,19 +2,19 @@ package com.kkansal.gatekeeper.management.entity;
 
 import com.kkansal.gatekeeper.management.entity.enums.HttpMethod;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import java.util.Set;
+import lombok.*;
 
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 
 @Entity
+@Table(uniqueConstraints = @UniqueConstraint(
+        name = "uk_route_upstream_path_method",
+        columnNames = {"upstream_service_id", "registered_path", "http_method"}
+))
 public class Route extends Auditable {
 
     @Column(nullable = false)
@@ -27,13 +27,8 @@ public class Route extends Auditable {
     @JoinColumn(name = "upstream_service_id", nullable = false)
     private Upstream upstream;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(
-            name = "route_allowed_methods",
-            joinColumns = @JoinColumn(name = "route_id")
-    )
     @Enumerated(EnumType.STRING)
-    @Column(name = "http_method")
-    private Set<HttpMethod> allowedMethods;
+    @Column(nullable = false)
+    private HttpMethod httpMethod;
 
 }

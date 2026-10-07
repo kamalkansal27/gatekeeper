@@ -9,4 +9,6 @@ public enum AppPermission {
     ROLE_WRITE,
     UPSTREAM_READ,
     UPSTREAM_WRITE,
+    ROUTE_READ,
+    ROUTE_WRITE,
 }

@@ -26,7 +26,7 @@ public class UpstreamService {
         this.tenantService = tenantService;
     }
 
-    private Upstream findByIdAndTenant(UUID tenantId, UUID upstreamId) {
+    public Upstream findByIdAndTenant(UUID tenantId, UUID upstreamId) {
         return upstreamRepository.findByIdAndTenantId(upstreamId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Upstream not found with ID: " + upstreamId));
     }
