@@ -3,6 +3,8 @@ package com.kkansal.gatekeeper.management.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -34,6 +36,7 @@ public class User extends Auditable {
 
     @ManyToOne
     @JoinColumn(name = "tenant_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Tenant tenant;
 
     @ManyToMany
@@ -42,5 +45,6 @@ public class User extends Auditable {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Role> roleSet = new HashSet<>();
 }

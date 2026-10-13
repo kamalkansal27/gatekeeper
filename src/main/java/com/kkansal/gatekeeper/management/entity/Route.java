@@ -3,6 +3,8 @@ package com.kkansal.gatekeeper.management.entity;
 import com.kkansal.gatekeeper.management.entity.enums.HttpMethod;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Getter
 @Setter
@@ -25,6 +27,7 @@ public class Route extends Auditable {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "upstream_service_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Upstream upstream;
 
     @Enumerated(EnumType.STRING)
