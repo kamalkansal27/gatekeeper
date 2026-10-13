@@ -13,6 +13,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public class RouteResponse {
 
+    private UUID id;
+
     private String registeredPath;
 
     private String targetPath;
@@ -25,6 +27,7 @@ public class RouteResponse {
 
     public static RouteResponse from(Route route) {
         return RouteResponse.builder()
+                .id(route.getId())
                 .registeredPath(route.getRegisteredPath())
                 .targetPath(route.getTargetPath())
                 .httpMethod(route.getHttpMethod())

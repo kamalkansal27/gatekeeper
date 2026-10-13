@@ -1,6 +1,7 @@
 package com.kkansal.gatekeeper.management.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.*;
 
 import java.util.HashSet;
@@ -23,6 +24,10 @@ public class User extends Auditable {
 
     @Column(nullable = false)
     private String username;
+
+    @Email
+    @Column(nullable = false, unique = true)
+    private String email;
 
     @Column(nullable = false)
     private String password;

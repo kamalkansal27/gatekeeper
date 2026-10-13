@@ -40,9 +40,10 @@ public class TenantDataSeeder {
 
         LOGGER.info("Tenant data seeding started for tenant '{}' ({})", tenant.getSlug(), tenant.getId());
 
+        String email = "super.user@" + tenant.getSlug() + ".gatekeeper.local";
         userService.createWithTenantId(tenant.getId(),
-                new CreateUserRequest(USERNAME, "secret", tenant.getId()));
-        LOGGER.info("Created initial user '{}' for tenant {}", USERNAME, tenant.getId());
+                new CreateUserRequest(USERNAME, email, "secret", tenant.getId()));
+        LOGGER.info("Created initial user '{}' ({}) for tenant {}", USERNAME, email, tenant.getId());
 
         roleService.createWithTenantId(tenant.getId(),
                 new CreateRoleRequest(ROLE_NAME));

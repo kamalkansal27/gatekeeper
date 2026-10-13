@@ -1,5 +1,6 @@
 package com.kkansal.gatekeeper.management.dto.request;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
@@ -14,6 +15,10 @@ public class CreateUserRequest {
 
     @NotBlank
     private String username;
+
+    @NotBlank
+    @Email
+    private String email;
 
     @NotBlank
     private String password;

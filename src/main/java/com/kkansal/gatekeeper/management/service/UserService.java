@@ -5,6 +5,7 @@ import com.kkansal.gatekeeper.management.dto.response.UserResponse;
 import com.kkansal.gatekeeper.management.entity.Role;
 import com.kkansal.gatekeeper.management.entity.Tenant;
 import com.kkansal.gatekeeper.management.entity.User;
+import com.kkansal.gatekeeper.management.exception.DuplicateResourceException;
 import com.kkansal.gatekeeper.management.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -13,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 
@@ -25,9 +27,13 @@ public class UserService {
     private TenantService tenantService;
     private PasswordEncoder passwordEncoder;
 
-    public User findByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with: " + username));
+    public static String normalizeEmail(String email) {
+        return email == null ? null : email.trim().toLowerCase(Locale.ROOT);
+    }
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(normalizeEmail(email))
+                .orElseThrow(() -> new EntityNotFoundException("User not found with: " + email));
     }
 
     public User findByUsernameAndTenant(Tenant tenant, String username) {
@@ -58,6 +64,7 @@ public class UserService {
 
         User user = new User();
         user.setUsername(userRequest.getUsername());
+        user.setEmail(uniqueEmail(userRequest.getEmail()));
 
         Role role = roleService.findByName("ROLE_ADMIN");
         user.getRoleSet().add(role);
@@ -74,6 +81,7 @@ public class UserService {
 
         User user = new User();
         user.setUsername(userRequest.getUsername());
+        user.setEmail(uniqueEmail(userRequest.getEmail()));
 
         Tenant tenant = tenantService.findById(tenantId);
         user.setTenant(tenant);
@@ -92,5 +100,13 @@ public class UserService {
         Tenant tenant = tenantService.findById(tenantId);
         User user = findByUsernameAndTenant(tenant, username);
         userRepository.delete(user);
+    }
+
+    private String uniqueEmail(String email) {
+        String normalized = normalizeEmail(email);
+        if (userRepository.existsByEmail(normalized)) {
+            throw new DuplicateResourceException("User with email '" + normalized + "' already exists");
+        }
+        return normalized;
     }
 }

@@ -22,6 +22,7 @@ public class AdminDataSeeder implements ApplicationRunner {
     private RoleService roleService;
     private UserService userService;
 
+    private static final String ADMIN_EMAIL = "admin@gatekeeper.com";
     private static final org.slf4j.Logger LOGGER = Logger.DATA_SEED_LOGGER;
 
     @Override
@@ -40,11 +41,11 @@ public class AdminDataSeeder implements ApplicationRunner {
         }
 
         try {
-            User user = userService.findByUsername("ADMIN");
+            User user = userService.findByEmail(ADMIN_EMAIL);
             LOGGER.info("User 'Admin' already exists, skipping creation");
         }
         catch (EntityNotFoundException exception) {
-            userService.create(new CreateUserRequest("ADMIN", "secret", null));
+            userService.create(new CreateUserRequest("ADMIN", ADMIN_EMAIL, "secret", null));
             LOGGER.info("Created user 'ADMIN'");
         }
 
