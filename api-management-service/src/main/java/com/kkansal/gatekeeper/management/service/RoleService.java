@@ -85,6 +85,11 @@ public class RoleService {
         Tenant tenant = tenantService.findById(tenantId);
 
         Role role = findByIdAndTenant(roleId, tenant);
+
+        if(roleRequest.getName() != null && roleRepository.existsByNameAndTenant(roleRequest.getName(), tenant)) {
+            throw new DuplicateResourceException("Role already exists with name - " + roleRequest.getName());
+        }
+
         role.setName(roleRequest.getName() != null ? roleRequest.getName() : role.getName());
 
         return RoleResponse.from(role);

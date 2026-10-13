@@ -62,6 +62,10 @@ public class UserService {
             return createWithTenantId(userRequest.getTenantId(), userRequest);
         }
 
+        if(userRepository.existsByEmail(userRequest.getEmail())) {
+            throw new DuplicateResourceException("User with email already exists " + userRequest.getEmail());
+        }
+
         User user = new User();
         user.setUsername(userRequest.getUsername());
         user.setEmail(uniqueEmail(userRequest.getEmail()));
@@ -78,6 +82,10 @@ public class UserService {
 
     @Transactional
     public UserResponse createWithTenantId(UUID tenantId, CreateUserRequest userRequest) {
+
+        if(userRepository.existsByEmail(userRequest.getEmail())) {
+            throw new DuplicateResourceException("User with email already exists " + userRequest.getEmail());
+        }
 
         User user = new User();
         user.setUsername(userRequest.getUsername());

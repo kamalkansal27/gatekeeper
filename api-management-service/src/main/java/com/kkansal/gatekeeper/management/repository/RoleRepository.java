@@ -16,4 +16,6 @@ public interface RoleRepository extends JpaRepository<Role, UUID> {
     Optional<Role> findByNameAndTenant(String name, Tenant tenant);
 
     Optional<Role> findByIdAndTenant(UUID id, Tenant tenant);
+
+    boolean existsByNameAndTenant(String name, Tenant tenant);
 }
