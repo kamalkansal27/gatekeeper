@@ -10,5 +10,9 @@
     "jutro-developer-assistant",
     "wfscopilot"
   ],
-  "outputStyle": "default"
+  "outputStyle": "default",
+  "disabledMcpjsonServers": [
+    "glean_gateway/proxy",
+    "aha"
+  ]
 }
