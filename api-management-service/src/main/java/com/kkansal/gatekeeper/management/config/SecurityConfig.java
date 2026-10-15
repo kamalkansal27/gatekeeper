@@ -40,7 +40,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth ->
 
                         auth.requestMatchers("/error").permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/**", "/internal/routes/snapshot").hasRole("ADMIN")
 
                         // Every tenant-scoped route must be listed explicitly; unlisted routes fall through to denyAll().
                         .requestMatchers(GET, "/api/tenants/{tenantId}").access(tenant.with("TENANT_READ", "TENANT_WRITE"))

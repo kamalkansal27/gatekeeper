@@ -35,6 +35,10 @@ public class TenantService {
                 .orElseThrow(() -> new EntityNotFoundException("Tenant not found with ID: " + id));
     }
 
+    public List<Tenant> findAll() {
+        return tenantRepository.findAll();
+    }
+
     public TenantResponse get(UUID id) {
         return TenantResponse.from(findById(id));
     }

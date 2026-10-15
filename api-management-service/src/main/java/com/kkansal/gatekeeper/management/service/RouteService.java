@@ -27,6 +27,10 @@ public class RouteService {
                 .orElseThrow(() -> new EntityNotFoundException("No Route Found with ID : " + routeId));
     }
 
+    public List<Route> findAllByUpstream(Upstream upstream) {
+        return routeRepository.findAllByUpstream(upstream);
+    }
+
     public List<RouteResponse> getAllByUpstream(UUID tenantId, UUID upstreamId) {
 
         Upstream upstream = upstreamService.findByIdAndTenant(tenantId, upstreamId);

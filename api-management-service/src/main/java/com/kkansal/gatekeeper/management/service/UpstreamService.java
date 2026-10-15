@@ -31,6 +31,10 @@ public class UpstreamService {
                 .orElseThrow(() -> new EntityNotFoundException("Upstream not found with ID: " + upstreamId));
     }
 
+    public List<Upstream> findAllByTenant(Tenant tenant) {
+        return upstreamRepository.findAllByTenant(tenant);
+    }
+
     public UpstreamResponse get(UUID tenantId, UUID upstreamId) {
         return UpstreamResponse.from(findByIdAndTenant(tenantId, upstreamId));
     }
