@@ -57,4 +57,18 @@ public class RouteRegistry {
         String key = tenantSlug + "/" + upstreamSlug;
         return routeMap.get(key);
     }
+
+    public Optional<RouteEntry> find(String tenantSlug, String upstreamSlug, String httpMethod, String registeredPath) {
+
+        List<RouteEntry> routeEntryList = find(tenantSlug, upstreamSlug);
+
+        if (routeEntryList == null) {
+            return Optional.empty();
+        }
+
+        return routeEntryList.stream()
+                .filter(r -> r.httpMethod().equalsIgnoreCase(httpMethod))
+                .filter(r -> r.registeredPath().equals(registeredPath))
+                .findFirst();
+    }
 }
