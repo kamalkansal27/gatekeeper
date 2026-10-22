@@ -71,11 +71,15 @@ public class TenantService {
     @Transactional
     public TenantResponse update(UUID id, UpdateTenantRequest tenantRequest) {
 
-        if(tenantRequest.getSlug() != null && tenantRepository.findBySlug(tenantRequest.getSlug()) != null) {
-            throw new DuplicateResourceException("Tenant with slug name '" + tenantRequest.getSlug() + "' already exists");
+        Tenant tenant = findById(id);
+
+        if(tenantRequest.getSlug() != null) {
+            Tenant existing = tenantRepository.findBySlug(tenantRequest.getSlug());
+            if(existing != null && !existing.getId().equals(id)) {
+                throw new DuplicateResourceException("Tenant with slug name '" + tenantRequest.getSlug() + "' already exists");
+            }
         }
 
-        Tenant tenant = findById(id);
         tenant.setName(tenantRequest.getName() != null ? tenantRequest.getName() : tenant.getName());
         tenant.setSlug(tenantRequest.getSlug() != null ? tenantRequest.getSlug() : tenant.getSlug());
         tenant.setTenantStatus(tenantRequest.getTenantStatus() != null ? tenantRequest.getTenantStatus() : tenant.getTenantStatus());
