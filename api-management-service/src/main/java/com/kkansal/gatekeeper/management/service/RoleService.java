@@ -53,6 +53,10 @@ public class RoleService {
     @Transactional
     public RoleResponse create(CreateRoleRequest roleRequest) {
 
+        if(roleRepository.existsByNameAndTenantIsNull(roleRequest.getName())) {
+            throw new DuplicateResourceException("Role with name '" + roleRequest.getName() + "' already exists");
+        }
+
         Role role = Role.builder()
                 .name(roleRequest.getName())
                 .build();
