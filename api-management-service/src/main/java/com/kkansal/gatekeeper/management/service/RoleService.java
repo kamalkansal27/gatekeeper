@@ -24,7 +24,7 @@ public class RoleService {
     private TenantService tenantService;
 
     public Role findByName(String roleName) {
-        return roleRepository.findByName(roleName)
+        return roleRepository.findByNameAndTenantIsNull(roleName)
                 .orElseThrow(() -> new EntityNotFoundException("Role not found with name : " + roleName));
     }
 

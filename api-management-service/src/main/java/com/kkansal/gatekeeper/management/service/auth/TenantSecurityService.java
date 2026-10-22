@@ -17,4 +17,12 @@ public class TenantSecurityService {
                 && user.getTenant() != null
                 && Objects.equals(user.getTenant().getId(), tenantId);
     }
+
+    public boolean isPlatformAdmin(Authentication authentication) {
+        return authentication != null
+                && authentication.isAuthenticated()
+                && authentication.getPrincipal() instanceof CustomUserDetails user
+                && user.getTenant() == null
+                && user.getAuthorities().stream().anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
+    }
 }

@@ -41,11 +41,19 @@ public class TenantAuthorizationManager implements AuthorizationManager<RequestA
     }
 
     /**
+     * Allows only tenant-less users holding ROLE_ADMIN, so a tenant-defined role named ROLE_ADMIN grants nothing extra.
+     */
+    public AuthorizationManager<RequestAuthorizationContext> platformAdmin() {
+        return (authentication, context) ->
+                new AuthorizationDecision(tenantSecurityService.isPlatformAdmin(authentication.get()));
+    }
+
+    /**
      * Allows platform admins, or members of the path's tenant holding any of the given permissions.
      */
     public AuthorizationManager<RequestAuthorizationContext> with(String... permissions) {
         return AuthorizationManagers.anyOf(
-                AuthorityAuthorizationManager.<RequestAuthorizationContext>hasRole("ADMIN"),
+                platformAdmin(),
                 AuthorizationManagers.allOf(
                         this,
                         AuthorityAuthorizationManager.<RequestAuthorizationContext>hasAnyAuthority(permissions)));
