@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @Service
 public class GatewayService {
@@ -26,6 +27,10 @@ public class GatewayService {
 
         RouteEntry routeEntry = routeRegistry.find(tenantSlug, upstreamSlug, request.getMethod(), remainingPath)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No Route found"));
+
+        if(Objects.equals(routeEntry.status(), "INACTIVE")) {
+            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Service is disabled by tenant admins");
+        }
 
         return upstreamClient.forward(routeEntry, request);
     }
