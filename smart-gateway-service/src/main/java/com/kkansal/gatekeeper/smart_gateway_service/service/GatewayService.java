@@ -32,6 +32,6 @@ public class GatewayService {
             throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Service is disabled by tenant admins");
         }
 
-        return upstreamClient.forward(routeEntry, request);
+        return upstreamClient.forward(routeEntry, request, remainingPath);
     }
 }

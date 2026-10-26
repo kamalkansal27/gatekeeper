@@ -5,6 +5,7 @@ import com.kkansal.gatekeeper.smart_gateway_service.dto.response.SnapshotRespons
 import com.kkansal.gatekeeper.smart_gateway_service.dto.response.TenantSnapshotResponse;
 import com.kkansal.gatekeeper.smart_gateway_service.dto.response.UpstreamSnapshotResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 
 import java.util.*;
 
@@ -58,7 +59,7 @@ public class RouteRegistry {
         return routeMap.get(key);
     }
 
-    public Optional<RouteEntry> find(String tenantSlug, String upstreamSlug, String httpMethod, String registeredPath) {
+    public Optional<RouteEntry> find(String tenantSlug, String upstreamSlug, String httpMethod, String remainingPath) {
 
         List<RouteEntry> routeEntryList = find(tenantSlug, upstreamSlug);
 
@@ -66,9 +67,11 @@ public class RouteRegistry {
             return Optional.empty();
         }
 
+        AntPathMatcher matcher = new AntPathMatcher();
+
         return routeEntryList.stream()
                 .filter(r -> r.httpMethod().equalsIgnoreCase(httpMethod))
-                .filter(r -> r.registeredPath().equals(registeredPath))
+                .filter(r -> matcher.match(r.registeredPath(), remainingPath))
                 .findFirst();
     }
 }

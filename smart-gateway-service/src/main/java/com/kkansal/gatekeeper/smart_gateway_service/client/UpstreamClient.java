@@ -7,6 +7,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.server.ResponseStatusException;
@@ -15,6 +16,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
 @Component
@@ -32,15 +34,16 @@ public class UpstreamClient {
         this.restClient = builder.build();
     }
 
-    public ResponseEntity<byte[]> forward(RouteEntry routeEntry, HttpServletRequest request) throws IOException {
+    public ResponseEntity<byte[]> forward(RouteEntry routeEntry, HttpServletRequest request, String remainingPath) throws IOException {
+
+        AntPathMatcher matcher = new AntPathMatcher();
+        Map<String, String> variables = matcher.extractUriTemplateVariables(routeEntry.registeredPath(), remainingPath);
 
         URI uri = UriComponentsBuilder.newInstance()
-                .scheme("http")
-                .host(routeEntry.host())
-                .port(routeEntry.port())
+                .scheme("http").host(routeEntry.host()).port(routeEntry.port())
                 .path(routeEntry.targetPath())
                 .query(request.getQueryString())
-                .build(true)
+                .buildAndExpand(variables)
                 .toUri();
 
         byte[] body = request.getInputStream().readAllBytes();
