@@ -2,9 +2,6 @@ package com.kkansal.gatekeeper.management.service.seeder;
 
 import com.kkansal.gatekeeper.management.dto.request.CreateRoleRequest;
 import com.kkansal.gatekeeper.management.dto.request.CreateUserRequest;
-import com.kkansal.gatekeeper.management.dto.response.RoleResponse;
-import com.kkansal.gatekeeper.management.dto.response.UserResponse;
-import com.kkansal.gatekeeper.management.dto.response.UserRoleResponse;
 import com.kkansal.gatekeeper.management.entity.Tenant;
 import com.kkansal.gatekeeper.management.entity.enums.AppPermission;
 import com.kkansal.gatekeeper.management.event.TenantCreatedEvent;
@@ -14,8 +11,8 @@ import com.kkansal.gatekeeper.management.service.RoleService;
 import com.kkansal.gatekeeper.management.service.UserRoleService;
 import com.kkansal.gatekeeper.management.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 @AllArgsConstructor
@@ -31,7 +28,7 @@ public class TenantDataSeeder {
     private static final String USERNAME = "Super Tenant User";
     private static final org.slf4j.Logger LOGGER = Logger.DATA_SEED_LOGGER;
 
-    @EventListener
+    @TransactionalEventListener
     public void onTenantCreated(TenantCreatedEvent event) {
         createInitialTenantData(event.tenant());
     }

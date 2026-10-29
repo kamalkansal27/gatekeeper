@@ -59,7 +59,7 @@ public class SecurityConfig {
                         .requestMatchers(DELETE, "/api/tenants/{tenantId}/upstreams/*").access(tenant.with("UPSTREAM_WRITE"))
 
                         .requestMatchers(GET, "/api/tenants/{tenantId}/upstreams/*/routes", "/api/tenants/{tenantId}/upstreams/*/routes/*").access(tenant.with("ROUTE_READ", "ROUTE_WRITE"))
-                        .requestMatchers(POST, "/api/tenants/{tenantId}/upstreams/*/routes").access(tenant.with("ROUTE_WRITE"))
+                        .requestMatchers(POST, "/api/tenants/{tenantId}/upstreams/*/routes","/api/tenants/{tenantId}/upstreams/*/routes/bulk").access(tenant.with("ROUTE_WRITE"))
                         .requestMatchers(PATCH, "/api/tenants/{tenantId}/upstreams/*/routes/*").access(tenant.with("ROUTE_WRITE"))
                         .requestMatchers(DELETE, "/api/tenants/{tenantId}/upstreams/*/routes/*").access(tenant.with("ROUTE_WRITE"))
 

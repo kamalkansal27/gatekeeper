@@ -53,24 +53,30 @@ public class RouteService {
 
         Upstream upstream = upstreamService.findByIdAndTenant(tenantId, upstreamId);
 
-        if (routeRepository.existsByUpstreamAndRegisteredPathAndHttpMethod(
-                upstream, routeRequest.getRegisteredPath(), routeRequest.getHttpMethod())) {
-            throw new DuplicateResourceException(
-                    "Route '" + routeRequest.getHttpMethod() + " " + routeRequest.getRegisteredPath()
-                            + "' already exists in Upstream - " + upstream.getName()
-            );
-        }
+        this.validateRouteCreation(upstream, routeRequest);
 
-        Route route = Route.builder()
-                .registeredPath(routeRequest.getRegisteredPath())
-                .targetPath(routeRequest.getTargetPath())
-                .httpMethod(routeRequest.getHttpMethod())
-                .upstream(upstream)
-                .build();
+        Route route = this.convertToRoute(upstream, routeRequest);
 
         routeRepository.save(route);
 
         return RouteResponse.from(route);
+    }
+
+    @Transactional
+    public List<RouteResponse> createAll(UUID tenantId, UUID upstreamId, List<CreateRouteRequest> routeRequestList) {
+
+        Upstream upstream = upstreamService.findByIdAndTenant(tenantId, upstreamId);
+
+        List<Route> routeList = routeRequestList.stream()
+                .peek(routeRequest -> this.validateRouteCreation(upstream, routeRequest))
+                .map(routeRequest -> this.convertToRoute(upstream, routeRequest))
+                .toList();
+
+        routeRepository.saveAll(routeList);
+
+        return routeList.stream()
+                .map(RouteResponse::from)
+                .toList();
     }
 
     @Transactional
@@ -95,5 +101,27 @@ public class RouteService {
         Route route = findByUpstreamAndId(upstream, routeId);
 
         routeRepository.delete(route);
+    }
+
+    private void validateRouteCreation(Upstream upstream, CreateRouteRequest routeRequest) {
+
+        if (routeRepository.existsByUpstreamAndRegisteredPathAndHttpMethod(
+                upstream, routeRequest.getRegisteredPath(), routeRequest.getHttpMethod())) {
+            throw new DuplicateResourceException(
+                    "Route '" + routeRequest.getHttpMethod() + " " + routeRequest.getRegisteredPath()
+                            + "' already exists in Upstream - " + upstream.getName()
+            );
+        }
+    }
+
+    private Route convertToRoute(Upstream upstream, CreateRouteRequest routeRequest) {
+
+        return Route.builder()
+                .registeredPath(routeRequest.getRegisteredPath())
+                .targetPath(routeRequest.getTargetPath())
+                .upstream(upstream)
+                .httpMethod(routeRequest.getHttpMethod())
+                .build();
+
     }
 }

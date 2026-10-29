@@ -24,6 +24,11 @@ public class RouteController {
         return routeService.create(tenantId, upstreamId, routeRequest);
     }
 
+    @PostMapping("/bulk")
+    public List<RouteResponse> createAll(@PathVariable UUID tenantId, @PathVariable UUID upstreamId, @RequestBody @Valid List<CreateRouteRequest> routeRequestList) {
+        return routeService.createAll(tenantId, upstreamId, routeRequestList);
+    }
+
     @GetMapping
     public List<RouteResponse> getAllByUpstream(@PathVariable UUID tenantId, @PathVariable UUID upstreamId) {
         return routeService.getAllByUpstream(tenantId, upstreamId);
