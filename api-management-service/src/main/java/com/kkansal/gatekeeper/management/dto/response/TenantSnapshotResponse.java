@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Builder
 @Getter
@@ -12,6 +13,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TenantSnapshotResponse {
+
+    private UUID id;
+
+    private Long version;
 
     private String slug;
 

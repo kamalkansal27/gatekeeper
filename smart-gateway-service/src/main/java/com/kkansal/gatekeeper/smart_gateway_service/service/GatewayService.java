@@ -1,7 +1,7 @@
 package com.kkansal.gatekeeper.smart_gateway_service.service;
 
 import com.kkansal.gatekeeper.smart_gateway_service.client.UpstreamClient;
-import com.kkansal.gatekeeper.smart_gateway_service.data.RouteEntry;
+import com.kkansal.gatekeeper.smart_gateway_service.data.RouteMatch;
 import com.kkansal.gatekeeper.smart_gateway_service.data.RouteRegistry;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.util.Objects;
 
 @Service
 public class GatewayService {
@@ -25,13 +24,13 @@ public class GatewayService {
 
     public ResponseEntity<byte[]> forward(String tenantSlug, String upstreamSlug, String remainingPath, HttpServletRequest request) throws IOException {
 
-        RouteEntry routeEntry = routeRegistry.find(tenantSlug, upstreamSlug, request.getMethod(), remainingPath)
+        RouteMatch routeMatch = routeRegistry.find(tenantSlug, upstreamSlug, request.getMethod(), remainingPath)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No Route found"));
 
-        if(Objects.equals(routeEntry.status(), "INACTIVE")) {
+        if(!routeMatch.isActive()) {
             throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Service is disabled by tenant admins");
         }
 
-        return upstreamClient.forward(routeEntry, request, remainingPath);
+        return upstreamClient.forward(routeMatch, request, remainingPath);
     }
 }

@@ -5,6 +5,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.Version;
 import lombok.*;
 
 @Getter
@@ -25,5 +26,9 @@ public class Tenant extends Auditable {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private Status tenantStatus;
+
+    @Version
+    @Column(nullable = false)
+    private Long version;
 
 }

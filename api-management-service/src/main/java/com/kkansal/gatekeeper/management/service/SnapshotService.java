@@ -45,6 +45,7 @@ public class SnapshotService {
                 for(Route route : routeList) {
                     routeSnapshotResponseList.add(RouteSnapshotResponse.builder()
                             .id(route.getId())
+                            .version(route.getVersion())
                             .httpMethod(route.getHttpMethod())
                             .registeredPath(route.getRegisteredPath())
                             .targetPath(route.getTargetPath())
@@ -53,6 +54,7 @@ public class SnapshotService {
 
                 upstreamSnapshotResponseList.add(UpstreamSnapshotResponse.builder()
                             .id(upstream.getId())
+                            .version(upstream.getVersion())
                             .slug(upstream.getSlug())
                             .status(upstream.getServiceStatus())
                             .host(upstream.getHost())
@@ -63,6 +65,8 @@ public class SnapshotService {
 
             tenantSnapshotResponseList.add(
                     TenantSnapshotResponse.builder()
+                            .id(tenant.getId())
+                            .version(tenant.getVersion())
                             .slug(tenant.getSlug())
                             .status(tenant.getTenantStatus())
                             .upstreamSnapshotResponseList(upstreamSnapshotResponseList)

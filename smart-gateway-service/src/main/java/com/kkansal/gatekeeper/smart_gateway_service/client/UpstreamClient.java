@@ -1,6 +1,8 @@
 package com.kkansal.gatekeeper.smart_gateway_service.client;
 
-import com.kkansal.gatekeeper.smart_gateway_service.data.RouteEntry;
+import com.kkansal.gatekeeper.smart_gateway_service.data.RouteMatch;
+import com.kkansal.gatekeeper.smart_gateway_service.data.RouteNode;
+import com.kkansal.gatekeeper.smart_gateway_service.data.UpstreamNode;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -34,14 +36,17 @@ public class UpstreamClient {
         this.restClient = builder.build();
     }
 
-    public ResponseEntity<byte[]> forward(RouteEntry routeEntry, HttpServletRequest request, String remainingPath) throws IOException {
+    public ResponseEntity<byte[]> forward(RouteMatch routeMatch, HttpServletRequest request, String remainingPath) throws IOException {
+
+        UpstreamNode upstream = routeMatch.upstream();
+        RouteNode route = routeMatch.route();
 
         AntPathMatcher matcher = new AntPathMatcher();
-        Map<String, String> variables = matcher.extractUriTemplateVariables(routeEntry.registeredPath(), remainingPath);
+        Map<String, String> variables = matcher.extractUriTemplateVariables(route.registeredPath(), remainingPath);
 
         URI uri = UriComponentsBuilder.newInstance()
-                .scheme("http").host(routeEntry.host()).port(routeEntry.port())
-                .path(routeEntry.targetPath())
+                .scheme("http").host(upstream.host()).port(upstream.port())
+                .path(route.targetPath())
                 .query(request.getQueryString())
                 .buildAndExpand(variables)
                 .toUri();

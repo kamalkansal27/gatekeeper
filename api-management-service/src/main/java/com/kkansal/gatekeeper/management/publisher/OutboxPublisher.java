@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
 import static com.kkansal.gatekeeper.management.logging.Logger.OUTBOX_LOGGER;
 
@@ -29,36 +29,25 @@ public class OutboxPublisher {
     }
 
     /**
-     * Blocks until every send in the batch settles. With fixedDelay this guarantees the next
-     * poll never re-reads a row whose send is still in flight, which would double-publish.
+     * Sends one event at a time and stops at the first failure, so a later event for a tenant can
+     * never reach Kafka ahead of an earlier one that is still waiting to be retried.
+     * A send that succeeds but whose delete fails is re-sent next poll; consumers drop it by version.
      */
     @Scheduled(fixedDelayString = "${outbox.poll-interval-ms:1000}")
     public void publishPendingEvents() {
 
         List<OutboxEvent> batch = outboxEventRepository.findAllByOrderByCreatedAtAsc(Limit.of(batchSize));
         OUTBOX_LOGGER.debug("Outbox poll found {} pending event(s)", batch.size());
-        if (batch.isEmpty()) {
-            return;
+
+        for (OutboxEvent event : batch) {
+            try {
+                kafkaTemplate.send(event.getTopic(), event.getMessageKey(), event.getPayload()).join();
+            } catch (CompletionException ex) {
+                OUTBOX_LOGGER.warn("Failed to publish outbox event {} to {}; will retry next poll",
+                        event.getId(), event.getTopic(), ex.getCause());
+                return;
+            }
+            outboxEventRepository.deleteById(event.getId());
         }
-
-        CompletableFuture<?>[] sends = batch.stream()
-                .map(this::send)
-                .toArray(CompletableFuture[]::new);
-
-        CompletableFuture.allOf(sends).exceptionally(ex -> null).join();
-    }
-
-    // The *Async variant keeps the blocking JDBC delete off Kafka's single producer I/O thread.
-    private CompletableFuture<?> send(OutboxEvent event) {
-
-        return kafkaTemplate.send(event.getTopic(), event.getPayload())
-                .whenCompleteAsync((result, ex) -> {
-                    if (ex == null) {
-                        outboxEventRepository.deleteById(event.getId());
-                    } else {
-                        OUTBOX_LOGGER.warn("Failed to publish outbox event {} to {}; will retry next poll",
-                                event.getId(), event.getTopic(), ex);
-                    }
-                });
     }
 }

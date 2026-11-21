@@ -7,6 +7,7 @@ import java.util.UUID;
 
 public record UpstreamSnapshotResponse(
         UUID id,
+        long version,
         String slug,
         String status,
         String host,

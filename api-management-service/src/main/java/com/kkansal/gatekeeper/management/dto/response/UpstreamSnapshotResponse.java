@@ -16,6 +16,8 @@ public class UpstreamSnapshotResponse {
 
     private UUID id;
 
+    private Long version;
+
     private String slug;
 
     private Status status;

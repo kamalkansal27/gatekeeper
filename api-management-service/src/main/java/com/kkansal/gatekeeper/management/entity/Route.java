@@ -34,4 +34,8 @@ public class Route extends Auditable {
     @Column(nullable = false)
     private HttpMethod httpMethod;
 
+    @Version
+    @Column(nullable = false)
+    private Long version;
+
 }

@@ -31,6 +31,10 @@ public class Upstream extends Auditable {
     @Column(nullable = false)
     private Integer port;
 
+    @Version
+    @Column(nullable = false)
+    private Long version;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "tenant_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)

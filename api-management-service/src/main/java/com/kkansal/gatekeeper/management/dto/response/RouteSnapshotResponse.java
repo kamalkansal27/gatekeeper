@@ -14,6 +14,8 @@ public class RouteSnapshotResponse {
 
     private UUID id;
 
+    private Long version;
+
     private HttpMethod httpMethod;
 
     private String registeredPath;

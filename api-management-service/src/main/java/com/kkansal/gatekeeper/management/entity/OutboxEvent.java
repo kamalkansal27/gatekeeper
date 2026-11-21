@@ -20,6 +20,9 @@ public class OutboxEvent extends Auditable {
     @Column(nullable = false)
     private String topic;
 
+    @Column(nullable = false)
+    private String messageKey;
+
     @Column(nullable = false, length = Length.LONG32)
     private String payload;
 

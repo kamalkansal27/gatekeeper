@@ -8,4 +8,5 @@ public class Logger {
 
     public static final org.slf4j.Logger DATA_SEED_LOGGER = LoggerFactory.getLogger("DATA_SEEDING");
     public static final org.slf4j.Logger AUTH_LOGGER = LoggerFactory.getLogger("AUTH");
+    public static final org.slf4j.Logger DATA_CHANGE_LOGGER = LoggerFactory.getLogger("DATA_CHANGE");
 }
